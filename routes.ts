@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express"
-import pagseguro from "./src/rest/pagseguro"
+import woocommerce from "./src/rest/woocommerce"
 
 export const router = express.Router()
 
-router.use("/pagseguro", pagseguro)
+router.use("/woocommerce", woocommerce)
