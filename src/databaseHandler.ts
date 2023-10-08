@@ -7,6 +7,7 @@ const inclusions = {
 }
 
 const order = {
+    find: async (id: number) => await prisma.order.findUnique({ where: { id }, include: inclusions.order }),
     new: async (data: Order & { shipping: Shipping; billing: Billing }) => {
         const shipping = await prisma.shipping.create({ data: data.shipping })
         const billing = await prisma.billing.create({ data: data.billing })

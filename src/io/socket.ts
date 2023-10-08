@@ -3,6 +3,7 @@ import { Client, ClientBag } from "../definitions/client"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
+import order from "./order"
 
 export let clientList: Client[] = []
 let io: SocketIoServer | null = null
@@ -26,4 +27,6 @@ export const handleSocket = (socket: Socket) => {
     socket.on("disconnect", () => {
         console.log(`disconnected: ${socket.id}`)
     })
+
+    socket.on("order:get", (id) => order.get(id, socket))
 }
