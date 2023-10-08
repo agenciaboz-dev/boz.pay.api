@@ -1,0 +1,60 @@
+generator client {
+    provider = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Order {
+    id              Int         @id
+    status          String
+    date_created    String
+    date_modified   String
+    total           String
+    customer_id     Int
+    order_key       String
+    cart_hash       String
+
+    billing_id      Int         @unique
+    shipping_id     Int         @unique
+
+    billing         Billing     @relation(fields: [billing_id], references: [id])
+    shipping        Shipping     @relation(fields: [shipping_id], references: [id])
+
+}
+
+model Billing {
+    id              Int         @id @default(autoincrement())
+    first_name      String
+    last_name       String
+    company         String
+    address_1       String
+    address_2       String
+    city            String
+    state           String
+    postcode        String
+    country         String
+    email           String
+    phone           String
+
+    order           Order?
+}
+
+model Shipping {
+    id              Int         @id @default(autoincrement())
+    first_name      String
+    last_name       String
+    company         String
+    address_1       String
+    address_2       String
+    city            String
+    state           String
+    postcode        String
+    country         String
+    phone           String
+
+    order           Order?
+}
