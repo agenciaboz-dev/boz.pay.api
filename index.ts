@@ -7,7 +7,6 @@ import cookieParser from "cookie-parser"
 import https from "https"
 import http from "http"
 import fs from "fs"
-import { Server } from "socket.io"
 import { getIoInstance, handleSocket, initializeIoServer } from "./src/io/socket"
 
 dotenv.config()

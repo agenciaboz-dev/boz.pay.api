@@ -1,11 +1,9 @@
 import { Socket } from "socket.io"
-import { Client, ClientBag } from "../definitions/client"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
 import order from "./order"
 
-export let clientList: Client[] = []
 let io: SocketIoServer | null = null
 
 export const initializeIoServer = (server: HttpServer | HttpsServer) => {
@@ -29,5 +27,5 @@ export const handleSocket = (socket: Socket) => {
     })
 
     socket.on("order:get", (id) => order.get(id, socket))
-    socket.on("order:pay", (id) => order.pay(id, socket))
+    socket.on("order:pay", (order) => order.pay(order, socket))
 }

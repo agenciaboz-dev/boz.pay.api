@@ -18,6 +18,10 @@ model Order {
     order_key       String
     cart_hash       String
 
+    pag_status      String      @default("waiting")
+    
+    pag_error       String?
+
     billing_id      Int         @unique
     shipping_id     Int         @unique
 
