@@ -29,4 +29,5 @@ export const handleSocket = (socket: Socket) => {
     })
 
     socket.on("order:get", (id) => order.get(id, socket))
+    socket.on("order:pay", (id) => order.pay(id, socket))
 }
