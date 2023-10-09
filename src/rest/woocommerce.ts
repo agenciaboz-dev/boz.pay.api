@@ -11,7 +11,7 @@ router.post("/new_order", async (request: Request, response: Response) => {
         data.date_modified = data.date_modified.date
 
         const order = await databaseHandler.order.new(data)
-        console.log({ order })
+        console.log({ order, data })
     } catch (error) {
         console.log(error)
     }
