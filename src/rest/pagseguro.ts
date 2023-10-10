@@ -15,6 +15,10 @@ router.post("/", async (request: Request, response: Response) => {
     }
 })
 
+router.get("/webhook", async (request, response, next) => {
+    response.json({ message: "webhook" })
+})
+
 router.post("/webhook", async (request, response, next) => {
     const data = request.body
 
