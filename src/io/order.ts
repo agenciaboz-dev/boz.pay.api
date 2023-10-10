@@ -15,16 +15,6 @@ const pay = async (order: { id: number; total: number; method: PaymentMethod } &
         console.log(error)
         socket.emit("order:pay:error", error)
     }
-    // woocommerce
-    //     .updateOrderStatus(id, "processing")
-    //     .then((data) => {
-    //         console.log(data)
-    //         socket.emit("order:pay:success")
-    //     })
-    //     .catch((error) => {
-    //         console.log(error)
-    //         socket.emit("order:pay:error", error)
-    //     })
 }
 
 export default { get, pay }
