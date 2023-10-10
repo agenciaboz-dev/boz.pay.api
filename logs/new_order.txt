@@ -10,21 +10,14 @@
         "city": "Curitiba",
         "state": "PR",
         "complement": "Apt 11",
-        "cardNumber": "4539620659922097",
-        "expiry": "12/2026",
-        "cvv": "123",
-        "cardOwner": "Fernando Burgos",
-        "type": "credit",
-        "installments": 1,
         "id": 2754,
-        "method": "card",
-        "total": "98.68",
-        "encrypted": "Wj2/cXrjFI3ATuF/Ws1gL0RoI9eGfHgty/pAixnuhdS5aBD4oMCdjAvFpQVgsQOY5ZOwyo20pYDeeWC4OPV5ggZLwLrmRqmt1rGAXreo0DxV8xUxTR3meuz6oXpi1ePsod1WR92RQnfrS5SNUHTRK/fWgaehqVmp6/eCIbb91G6343WMadzfYrkQ3bfth1VG/AJOzvn0NjXHkOUs15AhNZjTTo72nyFErWRDFdLVWro5yTtcVldxXyQJr/DJGISkYrvfim0LtxQViaVIAA+jMrMZi6+JspCJ0b+pPJ1QNJsyGFxxTxR09EuCGE/Mh7WPL9Sw9oyKFFNKeS2odZS1RQ=="
+        "method": "pix",
+        "total": "98.68"
     },
     "response": {
-        "id": "ORDE_DB90EB8E-383B-4EF4-A32F-9FA528946E44",
+        "id": "ORDE_5AA40C3C-E292-4382-BEF5-B3A738366898",
         "reference_id": "2754",
-        "created_at": "2023-10-10T11:45:34.045-03:00",
+        "created_at": "2023-10-10T14:31:23.875-03:00",
         "customer": {
             "name": "Fernando Burgos",
             "email": "nandobfer@gmail.com",
@@ -37,57 +30,29 @@
                 "unit_amount": 9868
             }
         ],
-        "charges": [
+        "qr_codes": [
             {
-                "id": "CHAR_84FB3B1C-1DDB-4DF6-93CA-482DEC81F288",
-                "reference_id": "2754",
-                "status": "PAID",
-                "created_at": "2023-10-10T11:45:34.547-03:00",
-                "paid_at": "2023-10-10T11:45:36.000-03:00",
-                "description": "",
+                "id": "QRCO_5FE611F5-99A3-4DF0-A747-035FB4209DC8",
+                "expiration_date": "2023-10-11T23:59:59.000-03:00",
                 "amount": {
-                    "value": 9868,
-                    "currency": "BRL",
-                    "summary": {
-                        "total": 9868,
-                        "paid": 9868,
-                        "refunded": 0
-                    }
+                    "value": 9868
                 },
-                "payment_response": {
-                    "code": "20000",
-                    "message": "SUCESSO",
-                    "reference": "032416400102"
-                },
-                "payment_method": {
-                    "type": "CREDIT_CARD",
-                    "installments": 1,
-                    "capture": true,
-                    "card": {
-                        "brand": "visa",
-                        "first_digits": "453962",
-                        "last_digits": "2097",
-                        "exp_month": "12",
-                        "exp_year": "2026",
-                        "holder": {
-                            "name": "Fernando Burgos"
-                        },
-                        "store": false
-                    },
-                    "soft_descriptor": "sellervirtual"
-                },
+                "text": "00020101021226850014br.gov.bcb.pix2563api-h.pagseguro.com/pix/v2/5FE611F5-99A3-4DF0-A747-035FB4209DC827600016BR.COM.PAGSEGURO01365FE611F5-99A3-4DF0-A747-035FB4209DC8520489995303986540598.685802BR5915L2G Textil Ltda6008Blumenau62070503***63046DE9",
+                "arrangements": [
+                    "PIX"
+                ],
                 "links": [
                     {
-                        "rel": "SELF",
-                        "href": "https://sandbox.api.pagseguro.com/charges/CHAR_84FB3B1C-1DDB-4DF6-93CA-482DEC81F288",
-                        "media": "application/json",
+                        "rel": "QRCODE.PNG",
+                        "href": "https://sandbox.api.pagseguro.com/qrcode/QRCO_5FE611F5-99A3-4DF0-A747-035FB4209DC8/png",
+                        "media": "image/png",
                         "type": "GET"
                     },
                     {
-                        "rel": "CHARGE.CANCEL",
-                        "href": "https://sandbox.api.pagseguro.com/charges/CHAR_84FB3B1C-1DDB-4DF6-93CA-482DEC81F288/cancel",
-                        "media": "application/json",
-                        "type": "POST"
+                        "rel": "QRCODE.BASE64",
+                        "href": "https://sandbox.api.pagseguro.com/qrcode/QRCO_5FE611F5-99A3-4DF0-A747-035FB4209DC8/base64",
+                        "media": "text/plain",
+                        "type": "GET"
                     }
                 ]
             }
@@ -98,13 +63,13 @@
         "links": [
             {
                 "rel": "SELF",
-                "href": "https://sandbox.api.pagseguro.com/orders/ORDE_DB90EB8E-383B-4EF4-A32F-9FA528946E44",
+                "href": "https://sandbox.api.pagseguro.com/orders/ORDE_5AA40C3C-E292-4382-BEF5-B3A738366898",
                 "media": "application/json",
                 "type": "GET"
             },
             {
                 "rel": "PAY",
-                "href": "https://sandbox.api.pagseguro.com/orders/ORDE_DB90EB8E-383B-4EF4-A32F-9FA528946E44/pay",
+                "href": "https://sandbox.api.pagseguro.com/orders/ORDE_5AA40C3C-E292-4382-BEF5-B3A738366898/pay",
                 "media": "application/json",
                 "type": "POST"
             }

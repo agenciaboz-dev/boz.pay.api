@@ -75,6 +75,9 @@ export const pagseguro = {
         api.post("/orders", pag_order, { headers })
             .then((response) => {
                 console.log(response.data)
+                if (order.method == "pix") {
+                    socket.emit("qrcode", response.data.qr_codes[0])
+                }
 
                 if (!existsSync("logs")) {
                     mkdirSync("logs")
