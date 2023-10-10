@@ -9,7 +9,12 @@ const get = async (id: number, socket: Socket) => {
 }
 
 const pay = async (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
-    pagseguro.order(order)
+    try {
+        pagseguro.order(order, socket)
+    } catch (error) {
+        console.log(error)
+        socket.emit("order:pay:error", error)
+    }
     // woocommerce
     //     .updateOrderStatus(id, "processing")
     //     .then((data) => {

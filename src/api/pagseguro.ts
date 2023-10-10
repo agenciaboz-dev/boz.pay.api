@@ -1,6 +1,7 @@
 import axios from "axios"
 import { Billing, Order, PrismaClient } from "@prisma/client"
 import { existsSync, mkdirSync, writeFileSync } from "fs"
+import { Socket } from "socket.io"
 
 const prisma = new PrismaClient()
 
@@ -13,10 +14,21 @@ const api = axios.create({
 const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
 // const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5ab384b54-9b9f-4140-b4cf-4675e700a829"
 
+// returns PAID
+// Número: 4539620659922097
+// Cód. de Seg.: 123
+// Data Exp.:12/2026
+
+// returns DECLINED
+// Número: 4929291898380766
+// Cód. de Seg.: 123
+// Data Exp.:12/2026
+
 const headers = { Authorization: token }
 
 export const pagseguro = {
-    order: (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm)) => {
+    order: (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
+        console.log(order)
         const pag_order: PagseguroOrder = {
             reference_id: order.id.toString(),
             customer: {
@@ -43,7 +55,7 @@ export const pagseguro = {
                               payment_method: {
                                   capture: true,
                                   card: {
-                                      encrypted: (order as CardOrderForm).cardNumber,
+                                      encrypted: (order as CardOrderForm).encrypted,
                                       holder: {
                                           name: (order as CardOrderForm).cardOwner,
                                       },
@@ -71,7 +83,9 @@ export const pagseguro = {
                 writeFileSync("logs/new_order.txt", JSON.stringify({ request: order || "undefined", response: response.data }, null, 4))
             })
             .catch(async (error) => {
+                console.log("error")
                 console.log(error.response.data)
+                socket.emit("order:pay:error", error.response.data.error_messages[0])
                 await prisma.order.update({
                     where: { id: Number(order.id) },
                     data: {
