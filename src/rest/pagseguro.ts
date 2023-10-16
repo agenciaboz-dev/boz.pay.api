@@ -39,7 +39,7 @@ router.post("/webhook", async (request, response, next) => {
             woocommerce
                 .updateOrderStatus(Number(data.reference_id), "processing")
                 .then((data) => {
-                    console.log(data)
+                    // console.log(data)
                 })
                 .catch((error) => {
                     console.log(error)
