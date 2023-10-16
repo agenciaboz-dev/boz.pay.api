@@ -108,4 +108,10 @@ const get = (order: any, callback: Function) =>
         callback(response)
     })
 
-export default { order, pixPay, get }
+const auth3ds = async () => {
+    const authHeader = { ...headers, ContentType: "application/json" }
+    const response = await axios.post("https://sdk.pagseguro.com/checkout-sdk/sessions", {}, { headers: authHeader })
+    console.log(response.data)
+}
+
+export default { order, pixPay, get, auth3ds }
