@@ -26,86 +26,86 @@ const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
 
 const headers = { Authorization: token }
 
-export const pagseguro = {
-    order: (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
-        console.log(order)
-        const pag_order: PagseguroOrder = {
-            reference_id: order.id.toString(),
-            customer: {
-                name: order.name,
-                tax_id: order.cpf.replace(/\D/g, ""),
-                email: order.email,
+const order = (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
+    console.log(order)
+    const pag_order: PagseguroOrder = {
+        reference_id: order.id.toString(),
+        customer: {
+            name: order.name,
+            tax_id: order.cpf.replace(/\D/g, ""),
+            email: order.email,
+        },
+        items: [
+            {
+                name: "Pabinka",
+                quantity: 1,
+                unit_amount: order.total * 100,
             },
-            items: [
-                {
-                    name: "Pabinka",
-                    quantity: 1,
-                    unit_amount: order.total * 100,
-                },
-            ],
-            notification_urls: ["https://app.agenciaboz.com.br:4108/api/pagseguro/webhook"],
+        ],
+        notification_urls: ["https://app.agenciaboz.com.br:4108/api/pagseguro/webhook"],
 
-            qr_codes: order.method == "pix" ? [{ amount: { value: order.total * 100 } }] : undefined,
-            charges:
-                order.method == "card"
-                    ? [
-                          {
-                              reference_id: order.id.toString(),
-                              amount: { currency: "BRL", value: order.total * 100 },
-                              payment_method: {
-                                  capture: true,
-                                  card: {
-                                      encrypted: (order as CardOrderForm).encrypted,
-                                      holder: {
-                                          name: (order as CardOrderForm).cardOwner,
-                                      },
-                                      security_code: (order as CardOrderForm).cvv,
-                                      store: false,
+        qr_codes: order.method == "pix" ? [{ amount: { value: order.total * 100 } }] : undefined,
+        charges:
+            order.method == "card"
+                ? [
+                      {
+                          reference_id: order.id.toString(),
+                          amount: { currency: "BRL", value: order.total * 100 },
+                          payment_method: {
+                              capture: true,
+                              card: {
+                                  encrypted: (order as CardOrderForm).encrypted,
+                                  holder: {
+                                      name: (order as CardOrderForm).cardOwner,
                                   },
-                                  installments: (order as CardOrderForm).installments,
-                                  type: (order as CardOrderForm).type == "debit" ? "DEBIT_CARD" : "CREDIT_CARD",
+                                  security_code: (order as CardOrderForm).cvv,
+                                  store: false,
                               },
+                              installments: (order as CardOrderForm).installments,
+                              type: (order as CardOrderForm).type == "debit" ? "DEBIT_CARD" : "CREDIT_CARD",
                           },
-                      ]
-                    : undefined,
-        }
+                      },
+                  ]
+                : undefined,
+    }
 
-        console.log(pag_order)
+    console.log(pag_order)
 
-        api.post("/orders", pag_order, { headers })
-            .then((response) => {
-                console.log(response.data)
-                if (order.method == "pix") {
-                    socket.emit("qrcode", response.data.qr_codes[0])
-                }
+    api.post("/orders", pag_order, { headers })
+        .then((response) => {
+            console.log(response.data)
+            if (order.method == "pix") {
+                socket.emit("qrcode", response.data.qr_codes[0])
+            }
 
-                if (!existsSync("logs")) {
-                    mkdirSync("logs")
-                }
+            if (!existsSync("logs")) {
+                mkdirSync("logs")
+            }
 
-                writeFileSync("logs/new_order.txt", JSON.stringify({ request: order || "undefined", response: response.data }, null, 4))
+            writeFileSync("logs/new_order.txt", JSON.stringify({ request: order || "undefined", response: response.data }, null, 4))
+        })
+        .catch(async (error) => {
+            console.log("error")
+            console.log(error.response.data)
+            socket.emit("order:pay:error", error.response.data.error_messages[0])
+            await prisma.order.update({
+                where: { id: Number(order.id) },
+                data: {
+                    pag_status: "error",
+                    pag_error: error.response.data.error_messages.map((error: any) => error.description).toString(),
+                },
             })
-            .catch(async (error) => {
-                console.log("error")
-                console.log(error.response.data)
-                socket.emit("order:pay:error", error.response.data.error_messages[0])
-                await prisma.order.update({
-                    where: { id: Number(order.id) },
-                    data: {
-                        pag_status: "error",
-                        pag_error: error.response.data.error_messages.map((error: any) => error.description).toString(),
-                    },
-                })
-            })
-    },
-
-    pixPay: (order: any, callback: Function) =>
-        api.post("/pix/pay/" + order.id, { status: "PAID", tx_id: order.id }, { headers }).then((response) => {
-            callback(response)
-        }),
-
-    get: (order: any, callback: Function) =>
-        api.get("/orders/" + order.id, { headers }).then((response) => {
-            callback(response)
-        }),
+        })
 }
+
+const pixPay = (order: any, callback: Function) =>
+    api.post("/pix/pay/" + order.id, { status: "PAID", tx_id: order.id }, { headers }).then((response) => {
+        callback(response)
+    })
+
+const get = (order: any, callback: Function) =>
+    api.get("/orders/" + order.id, { headers }).then((response) => {
+        callback(response)
+    })
+
+export default { order, pixPay, get }
