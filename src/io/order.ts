@@ -12,7 +12,7 @@ const get = async (id: number, socket: Socket) => {
         try {
             const quoteResponse = await frenet.quote(order)
             const quoteList = quoteResponse.ShippingSevicesArray
-            console.log(quoteResponse)
+            // console.log(quoteResponse)
             socket.emit("quote", quoteList)
         } catch (error) {
             console.log(error)
