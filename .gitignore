@@ -6,3 +6,4 @@ dist
 whatsapp.auth
 static/users
 static/customers
+logs
