@@ -24,6 +24,7 @@ router.post("/webhook", async (request, response, next) => {
     const data = request.body
 
     console.log("WEBHOOK CALL")
+    console.log(data)
     if (data.charges?.length > 0) {
         const io = getIoInstance()
 
