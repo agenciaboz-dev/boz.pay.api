@@ -92,7 +92,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
                 where: { id: Number(order.id) },
                 data: {
                     pag_status: "error",
-                    pag_error: error.response.data.error_messages.map((error: any) => error.description).toString(),
+                    pag_error: error.response.data.error_messages?.map((error: any) => error.description).toString() || "erro desconhecido",
                 },
             })
         })
