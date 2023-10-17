@@ -22,8 +22,20 @@ const get = async (id: number, socket: Socket) => {
 }
 
 const pay = async (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
-    // await pagseguro.auth3ds()
     try {
+        if (order.method == "card") {
+            if ((order as CardOrderForm).type == "debit" && !(order as CardOrderForm).auth) {
+                let session = pagseguro.getSession()
+
+                if (!session || new Date() >= new Date(session.expires_at)) {
+                    session = await pagseguro.auth3ds()
+                }
+
+                socket.emit("pagseguro:3ds", session)
+                return
+            }
+        }
+
         pagseguro.order(order, socket)
     } catch (error) {
         console.log(error)

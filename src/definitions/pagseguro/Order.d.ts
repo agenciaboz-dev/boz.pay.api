@@ -56,6 +56,8 @@ interface Charge {
             }
             store: false
         }
+
+        authentication_method?: PagseguroAuth
     }
 }
 

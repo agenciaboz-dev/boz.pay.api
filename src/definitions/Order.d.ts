@@ -7,6 +7,8 @@ declare interface CardOrderForm extends OrderForm {
     cardOwner: string
     type: "credit" | "debit"
     installments: number
+
+    auth?: string
 }
 
 declare interface OrderForm {

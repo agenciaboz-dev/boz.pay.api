@@ -6,13 +6,13 @@ import { Socket } from "socket.io"
 const prisma = new PrismaClient()
 
 const api = axios.create({
-    baseURL: "https://api.pagseguro.com",
-    // baseURL: "https://sandbox.api.pagseguro.com",
+    // baseURL: "https://api.pagseguro.com",
+    baseURL: "https://sandbox.api.pagseguro.com",
     timeout: 1000 * 10,
 })
 
-// const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
-const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5ab384b54-9b9f-4140-b4cf-4675e700a829"
+const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
+// const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5ab384b54-9b9f-4140-b4cf-4675e700a829"
 
 // returns PAID
 // Número: 4539620659922097
@@ -24,7 +24,19 @@ const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5a
 // Cód. de Seg.: 123
 // Data Exp.:12/2026
 
+// DEBIT CARDS
+// success without challenge
+// 4000000000002370
+// success with challenge
+// 5200000000001096
+// fail
+// 4000000000002719
+
 const headers = { Authorization: token }
+
+let session: PagseguroSession | undefined
+
+const getSession = () => session
 
 const order = (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
     console.log(order)
@@ -61,6 +73,12 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
                                   security_code: (order as CardOrderForm).cvv,
                                   store: false,
                               },
+                              authentication_method: (order as CardOrderForm).auth
+                                  ? {
+                                        id: (order as CardOrderForm).auth || "",
+                                        type: "THREEDS",
+                                    }
+                                  : undefined,
                               installments: (order as CardOrderForm).installments,
                               type: (order as CardOrderForm).type == "debit" ? "DEBIT_CARD" : "CREDIT_CARD",
                           },
@@ -110,8 +128,10 @@ const get = (order: any, callback: Function) =>
 
 const auth3ds = async () => {
     const authHeader = { ...headers, ContentType: "application/json" }
-    const response = await axios.post("https://sdk.pagseguro.com/checkout-sdk/sessions", {}, { headers: authHeader })
+    const response = await api.post("/checkout-sdk/sessions", {}, { headers: authHeader })
     console.log(response.data)
+    session = response.data
+    return session
 }
 
-export default { order, pixPay, get, auth3ds }
+export default { order, pixPay, get, auth3ds, getSession }
