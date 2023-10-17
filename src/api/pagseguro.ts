@@ -6,13 +6,13 @@ import { Socket } from "socket.io"
 const prisma = new PrismaClient()
 
 const api = axios.create({
-    baseURL: "https://api.pagseguro.com",
-    // baseURL: "https://sandbox.api.pagseguro.com",
+    // baseURL: "https://api.pagseguro.com",
+    baseURL: "https://sandbox.api.pagseguro.com",
     timeout: 1000 * 10,
 })
 
-// const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
-const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5ab384b54-9b9f-4140-b4cf-4675e700a829"
+const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
+// const token = "5e137c4a-acd6-433a-83a7-736815c6995b0ad8f02a47329494fac489b021d5ab384b54-9b9f-4140-b4cf-4675e700a829"
 
 // returns PAID
 // Número: 4539620659922097
