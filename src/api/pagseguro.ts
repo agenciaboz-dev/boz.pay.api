@@ -86,7 +86,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
         })
         .catch(async (error) => {
             console.log("error")
-            console.log(error.response.data)
+            console.log(error.response?.data || error)
             // socket.emit("order:pay:error", error.response.data.error_messages ? error.response.data.error_messages[0] : "erro desconhecido")
             await prisma.order.update({
                 where: { id: Number(order.id) },
