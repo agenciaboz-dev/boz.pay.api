@@ -5,7 +5,7 @@ import pagseguro from "../api/pagseguro"
 import frenet from "../api/frenet"
 
 const get = async (id: number, socket: Socket) => {
-    const order = await databaseHandler.order.find(id)
+    const order = await databaseHandler.order.find(Number(id))
     socket.emit("order", order)
 
     if (order) {
