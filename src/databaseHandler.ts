@@ -8,8 +8,15 @@ const inclusions = {
 
 const order = {
     find: async (id: number) => await prisma.order.findUnique({ where: { id }, include: inclusions.order }),
-    new: async (data: Order & { shipping: Shipping; billing: Billing }) => {
-        const shipping = await prisma.shipping.create({ data: data.shipping })
+    new: async (data: Order & { shipping: Shipping; billing: Billing; meta_data: { id: string; key: string; value: string }[] }) => {
+        const shipping = await prisma.shipping.create({
+            data: {
+                ...data.shipping,
+                cpf: data.meta_data.find((meta) => meta.key == "_billing_cpf")?.value || "",
+                district: data.meta_data.find((meta) => meta.key == "_shipping_neighborhood")?.value || "",
+                number: data.meta_data.find((meta) => meta.key == "_shipping_number")?.value || "",
+            },
+        })
         const billing = await prisma.billing.create({ data: data.billing })
         const order = await prisma.order.create({
             data: {
