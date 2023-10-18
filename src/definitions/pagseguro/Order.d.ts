@@ -25,7 +25,8 @@ interface Address {
     locality: string
     city: string
     region_code: string
-    country: "BRA"
+    region?: string
+    country: "BRA" | "Brasil"
     postal_code: string
 }
 
@@ -45,16 +46,30 @@ interface Charge {
         currency: "BRL"
     }
     payment_method: {
-        type: "CREDIT_CARD" | "DEBIT_CARD"
-        installments: number
+        type: "CREDIT_CARD" | "DEBIT_CARD" | "BOLETO"
+        installments?: number
         capture: true
-        card: {
+        card?: {
             encrypted: string
             security_code: string
             holder: {
                 name: string
             }
             store: false
+        }
+
+        boleto?: {
+            due_date: string
+            instruction_lines: {
+                line_1: string
+                line_2: string
+            }
+            holder: {
+                name: string
+                tax_id: string
+                email: string
+                address: Address
+            }
         }
 
         authentication_method?: PagseguroAuth

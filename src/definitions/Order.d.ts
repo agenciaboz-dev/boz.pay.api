@@ -23,4 +23,5 @@ declare interface OrderForm {
     city: string
     state: string
     complement: string
+    number: string
 }

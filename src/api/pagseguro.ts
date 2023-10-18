@@ -25,11 +25,13 @@ const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
 // Data Exp.:12/2026
 
 // DEBIT CARDS
-// success without challenge
+// declined with challenge (working)
 // 4000000000002370
-// success with challenge
+// success without challenge 
 // 5200000000001096
-// fail
+// success with challenge (working)
+// 5200000000001096
+// fail - not supported (need to handle)
 // 4000000000002719
 
 const headers = { Authorization: token }
@@ -58,29 +60,60 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
 
         qr_codes: order.method == "pix" ? [{ amount: { value: order.total * 100 } }] : undefined,
         charges:
-            order.method == "card"
+            order.method == "card" || order.method == "boleto"
                 ? [
                       {
                           reference_id: order.id.toString(),
                           amount: { currency: "BRL", value: order.total * 100 },
                           payment_method: {
                               capture: true,
-                              card: {
-                                  encrypted: (order as CardOrderForm).encrypted,
-                                  holder: {
-                                      name: (order as CardOrderForm).cardOwner,
-                                  },
-                                  security_code: (order as CardOrderForm).cvv,
-                                  store: false,
-                              },
+                              card:
+                                  order.method == "card"
+                                      ? {
+                                            encrypted: (order as CardOrderForm).encrypted,
+                                            holder: {
+                                                name: (order as CardOrderForm).cardOwner,
+                                            },
+                                            security_code: (order as CardOrderForm).cvv,
+                                            store: false,
+                                        }
+                                      : undefined,
+
+                              boleto:
+                                  order.method == "boleto"
+                                      ? {
+                                            due_date: "2023-10-20",
+                                            instruction_lines: {
+                                                line_1: "Via PagSeguro",
+                                                line_2: "Via PagSeguro",
+                                            },
+                                            holder: {
+                                                name: order.name,
+                                                email: order.email,
+                                                tax_id: order.cpf.replace(/\D/g, ""),
+                                                address: {
+                                                    city: order.city,
+                                                    country: "Brasil",
+                                                    locality: order.district || "nao informado",
+                                                    number: order.number,
+                                                    postal_code: order.postcode.replace(/\D/g, ""),
+                                                    street: order.address,
+                                                    region_code: order.state,
+                                                    region: order.state,
+                                                    complement: order.complement || "nao informado",
+                                                },
+                                            },
+                                        }
+                                      : undefined,
+
                               authentication_method: (order as CardOrderForm).auth
                                   ? {
                                         id: (order as CardOrderForm).auth || "",
                                         type: "THREEDS",
                                     }
                                   : undefined,
-                              installments: (order as CardOrderForm).installments,
-                              type: (order as CardOrderForm).type == "debit" ? "DEBIT_CARD" : "CREDIT_CARD",
+                              installments: order.method == "card" ? (order as CardOrderForm).installments : undefined,
+                              type: order.method == "card" ? ((order as CardOrderForm).type == "debit" ? "DEBIT_CARD" : "CREDIT_CARD") : "BOLETO",
                           },
                       },
                   ]
@@ -88,12 +121,17 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
     }
 
     console.log(pag_order)
+    console.log(pag_order.charges![0].payment_method.boleto?.holder)
 
     api.post("/orders", pag_order, { headers })
         .then((response) => {
             console.log(response.data)
             if (order.method == "pix") {
                 socket.emit("qrcode", response.data.qr_codes[0])
+            }
+
+            if (order.method == "boleto") {
+                socket.emit("pagseguro:boleto", { boleto: response.data.charges[0].payment_method.boleto, links: response.data.charges[0].links })
             }
 
             if (!existsSync("logs")) {
