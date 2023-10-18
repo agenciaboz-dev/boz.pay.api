@@ -59,6 +59,9 @@ model Shipping {
     postcode        String
     country         String
     phone           String
+    district        String      @default("")
+    cpf             String      @default("")
+    number          String      @default("")
 
     order           Order?
 }
