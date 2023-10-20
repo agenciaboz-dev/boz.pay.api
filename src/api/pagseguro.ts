@@ -2,6 +2,7 @@ import axios from "axios"
 import { Billing, Order, PrismaClient } from "@prisma/client"
 import { existsSync, mkdirSync, writeFileSync } from "fs"
 import { Socket } from "socket.io"
+import { getDueDate } from "../scripts/formatDate"
 
 const prisma = new PrismaClient()
 
@@ -27,7 +28,7 @@ const token = "1BD9D2D2181B4660BAFC9426CA5A63A9" // sandbox
 // DEBIT CARDS
 // declined with challenge (working)
 // 4000000000002370
-// success without challenge 
+// success without challenge
 // 5200000000001096
 // success with challenge (working)
 // 5200000000001096
@@ -82,7 +83,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
                               boleto:
                                   order.method == "boleto"
                                       ? {
-                                            due_date: "2023-10-23",
+                                            due_date: getDueDate(),
                                             instruction_lines: {
                                                 line_1: "Via PagSeguro",
                                                 line_2: "Via PagSeguro",
