@@ -121,7 +121,6 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
     }
 
     console.log(pag_order)
-    console.log(pag_order.charges![0].payment_method.boleto?.holder)
 
     api.post("/orders", pag_order, { headers })
         .then((response) => {
