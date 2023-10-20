@@ -58,7 +58,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
         ],
         notification_urls: ["https://app.agenciaboz.com.br:4108/api/pagseguro/webhook"],
 
-        qr_codes: order.method == "pix" ? [{ amount: { value: order.total * 100 } }] : undefined,
+        qr_codes: order.method == "pix" ? [{ amount: { value: Math.round(order.total * 100) } }] : undefined,
         charges:
             order.method == "card" || order.method == "boleto"
                 ? [
