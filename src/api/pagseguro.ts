@@ -53,18 +53,18 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
             {
                 name: "Pabinka",
                 quantity: 1,
-                unit_amount: order.total * 100,
+                unit_amount: Math.round(order.total * 100),
             },
         ],
         notification_urls: ["https://app.agenciaboz.com.br:4108/api/pagseguro/webhook"],
 
-        qr_codes: order.method == "pix" ? [{ amount: { value: Number((order.total * 100).toFixed(0)) } }] : undefined,
+        qr_codes: order.method == "pix" ? [{ amount: { value: Math.round(order.total * 100) } }] : undefined,
         charges:
             order.method == "card" || order.method == "boleto"
                 ? [
                       {
                           reference_id: order.id.toString(),
-                          amount: { currency: "BRL", value: order.total * 100 },
+                          amount: { currency: "BRL", value: Math.round(order.total * 100) },
                           payment_method: {
                               capture: true,
                               card:
