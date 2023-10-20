@@ -82,7 +82,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
                               boleto:
                                   order.method == "boleto"
                                       ? {
-                                            due_date: "2023-10-20",
+                                            due_date: "2023-10-23",
                                             instruction_lines: {
                                                 line_1: "Via PagSeguro",
                                                 line_2: "Via PagSeguro",
