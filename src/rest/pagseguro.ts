@@ -31,7 +31,7 @@ router.post("/webhook", async (request, response, next) => {
         const charge = data.charges[0]
         console.log(charge)
 
-        writeFileSync("logs/webhook.txt", JSON.stringify(data, null, 4))
+        writeFileSync(`logs/webhook-${data.reference_id}.txt`, JSON.stringify(data, null, 4))
 
         await prisma.order.update({ data: { pag_status: charge.status }, where: { id: Number(data.reference_id) } })
         io.emit("pagseguro:paid", { id: Number(data.reference_id), charge })
