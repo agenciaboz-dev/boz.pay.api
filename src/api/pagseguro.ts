@@ -138,7 +138,7 @@ const order = (order: { id: number; total: number; method: PaymentMethod } & (Or
                 mkdirSync("logs")
             }
 
-            writeFileSync("logs/new_order.txt", JSON.stringify({ request: order || "undefined", response: response.data }, null, 4))
+            writeFileSync(`logs/new_order-${order.id}.txt`, JSON.stringify({ request: order || "undefined", response: response.data }, null, 4))
         })
         .catch(async (error) => {
             console.log("error")
