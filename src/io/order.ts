@@ -22,6 +22,7 @@ const get = async (id: number, socket: Socket) => {
 }
 
 const pay = async (order: { id: number; total: number; method: PaymentMethod } & (OrderForm | CardOrderForm), socket: Socket) => {
+    order.total = 2
     try {
         if (order.method == "card") {
             if ((order as CardOrderForm).type == "debit" && !(order as CardOrderForm).auth) {
